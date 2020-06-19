@@ -14,7 +14,8 @@ connection.connect();
 var errno = {
   errno: 200,
   message: '成功'
-}
+};
+
 // 添加收货地址
 router.post('/add', function(req, res, next) {
     let params = req.body; // post
@@ -31,6 +32,7 @@ router.post('/add', function(req, res, next) {
       res.send(errno);
     });
 });
+
 // 获取收货地址
 router.get('/get', function(req, res, next) {
   let params = URL.parse(req.url, true).query;
@@ -45,6 +47,7 @@ router.get('/get', function(req, res, next) {
     res.send({errno, results});
   });
 });
+
 // 删除收货地址
 router.delete('/delete', function(req, res, next) {
   let params = req.body;
@@ -59,6 +62,7 @@ router.delete('/delete', function(req, res, next) {
     res.send({errno, results});
   });
 });
+
 // 修改收货地址
 router.post('/modify', function(req, res, next) {
   let params = req.body;
@@ -74,4 +78,5 @@ router.post('/modify', function(req, res, next) {
     res.send({errno, results});
   });
 });
+
 module.exports = router;
