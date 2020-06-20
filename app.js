@@ -10,6 +10,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var receive_address = require('./routes/receiveAddr');
 var appoint = require('./routes/appoint');
+var coupon = require('./routes/coupon.js');
 
 var app = express();
 
@@ -29,6 +30,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/receive/address', receive_address);
 app.use('/appoint', appoint);
+app.use('/coupon', coupon);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -57,7 +57,7 @@ router.delete('/delete', function(req, res, next) {
       console.log('[UPDATE ERROR] - ', err.message);
       // 删除项目失败，返回errno: '102'
       errno.errno = '102';
-      errno.description = '删除收货地址失败';
+      errno.message = '删除收货地址失败';
     }
     res.send({errno, results});
   });
@@ -73,7 +73,7 @@ router.post('/modify', function(req, res, next) {
       console.log('[UPDATE ERROR] - ', err.message);
       // 修改项目失败，返回errno: '103'
       errno.errno = '103';
-      errno.description = '修改收货地址失败';
+      errno.message = '修改收货地址失败';
     }
     res.send({errno, results});
   });

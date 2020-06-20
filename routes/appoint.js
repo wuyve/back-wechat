@@ -49,35 +49,35 @@ router.get('/get', function(req, res, next) {
   });
 });
 
-// // 删除收货地址
-// router.delete('/delete', function(req, res, next) {
-//   let params = req.body;
-//   let delSQL = `DELETE FROM receive_address WHERE receive_id = ${params.receive_id}`;
-//   connection.query(delSQL, function(err, results) {
-//     if(err) {
-//       console.log('[UPDATE ERROR] - ', err.message);
-//       // 删除项目失败，返回errno: '102'
-//       errno.errno = '102';
-//       errno.description = '删除收货地址失败';
-//     }
-//     res.send({errno, results});
-//   });
-// });
+// 修改预约信息
+router.post('/modify', function(req, res, next) {
+  let params = req.body;
+  let updateSQL = `UPDATE appoint SET date = ?, opera = ?, item = ? WHERE open_id = ? AND appoint_id = ?`;
+  let updateParams = [params.date, params.opera, params.item, params.open_id, params.appoint_id];
+  connection.query(updateSQL, updateParams, function(err, results) {
+    if (err) {
+      console.log('[UPDATE ERROR] - ', err.message);
+      errno.errno = 106;
+      errno.message = '修改预约信息失败';
+    }
+    res.send({errno, results});
+  });
+});
 
-// // 修改收货地址
-// router.post('/modify', function(req, res, next) {
-//   let params = req.body;
-//   let updateSQL = `UPDATE receive_address SET is_default = ?, open_id = ?, link_name = ?, link_phone = ?, link_area = ?, link_addr = ? WHERE receive_id = ?`;
-//   let updateParams = [params.is_default, params.open_id, params.link_name, params.link_phone, params.link_area, params.link_addr, params.receive_id];
-//   connection.query(updateSQL, updateParams, function(err, results) {
-//     if (err) {
-//       console.log('[UPDATE ERROR] - ', err.message);
-//       // 修改项目失败，返回errno: '103'
-//       errno.errno = '103';
-//       errno.description = '修改收货地址失败';
-//     }
-//     res.send({errno, results});
-//   });
-// });
+// 删除预约信息
+router.delete('/delete', function(req, res, next) {
+  let params = req.body;
+  let delSQL = `DELETE FROM appoint WHERE open_id = ? AND appoint_id = ?`;
+  let delParam = [params.open_id, params.appoint_id]
+  connection.query(delSQL, delParam, function(err, results) {
+    if(err) {
+      console.log('[UPDATE ERROR] - ', err.message);
+      errno.errno = 107;
+      errno.message = '删除预约信息失败';
+    }
+    res.send({errno, results});
+  });
+});
+
 
 module.exports = router;
