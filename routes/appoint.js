@@ -24,6 +24,8 @@ router.post('/add', function(req, res, next) {
     let addparam = [params.open_id, params.date, params.opera, params.item];
     console.log(params);
     connection.query(addSQL, addparam, function(err, results) {
+      errno.errno = 200;
+      errno.message = '成功';  
       if (err) {
         console.log('[INSERT ERROR] - ', err.message);
         errno.errno = 104;
@@ -40,6 +42,8 @@ router.get('/get', function(req, res, next) {
   let searchSQL = `SELECT * FROM appoint WHERE open_id = '${params.open_id}' AND opera = '${params.opera}'`;
   let searchParam = [params.open_id, params.opera];
   connection.query(searchSQL, function(err, results) {
+    errno.errno = 200;
+    errno.message = '成功';
     if (err) {
       console.log('[SELECt ERROR] - ', err.message);
       errno.errno = 105;
@@ -55,6 +59,8 @@ router.post('/modify', function(req, res, next) {
   let updateSQL = `UPDATE appoint SET date = ?, opera = ?, item = ? WHERE open_id = ? AND appoint_id = ?`;
   let updateParams = [params.date, params.opera, params.item, params.open_id, params.appoint_id];
   connection.query(updateSQL, updateParams, function(err, results) {
+    errno.errno = 200;
+    errno.message = '成功';
     if (err) {
       console.log('[UPDATE ERROR] - ', err.message);
       errno.errno = 106;
@@ -70,6 +76,8 @@ router.delete('/delete', function(req, res, next) {
   let delSQL = `DELETE FROM appoint WHERE open_id = ? AND appoint_id = ?`;
   let delParam = [params.open_id, params.appoint_id]
   connection.query(delSQL, delParam, function(err, results) {
+    errno.errno = 200;
+    errno.message = '成功';
     if(err) {
       console.log('[UPDATE ERROR] - ', err.message);
       errno.errno = 107;

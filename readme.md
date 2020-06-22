@@ -57,4 +57,30 @@
         }  
     </style>
     ```
-    
+
+4. 数据表设计
+
+4.1 预约数据表（appoint)
+<center>appoint数据表关键字</center>
+
+|关键字|数据类型|描述|是否必须|
+|:---|:---|:---|:---|
+|appoint_id|int(255)|预约id|否（自动递增）|
+|open_id|varchar(100)|用户id|是|
+|date|datetime(6)|预约时间|是|
+|opera|int(10)|预约状态：见枚举设计|是|
+|item|int(10)|项目类型：见枚举设计|是|
+
+4.2 收货地址数据表(receive_address)
+<center>receive_address关键字数据表</center>
+
+|关键字|数据类型|描述|是否必须|
+|:---|:---|:---|:---|
+|is_default|int(11)|是否为默认地址 1：默认；0：不默认|是|
+|open_id|varchar(100)|用户id|是|
+|link_name|varchar(100)|收获姓名|是|
+|link_phone|varchar(100)|收货电话|是|
+|link_area|varchar(100)|收货地区（省市区）|是|
+|link_addr|varchar(100)|详细地址|是|
+|receive_id|varchar(100)|收货地址id|否（自动递增）|
+
