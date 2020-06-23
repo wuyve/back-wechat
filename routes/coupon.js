@@ -40,7 +40,12 @@ router.post('/add', function(req, res, next) {
 router.get('/get', function(req, res, next) {
   let params = URL.parse(req.url, true).query;
   console.log(params);
-  let searchSQL = `SELECT * FROM coupon WHERE open_id = '${params.open_id}' AND use_type = ${params.use_type} AND status = ${params.status}`;
+  let searchSQL = ''
+  if (params.use_type) {
+    searchSQL = `SELECT * FROM coupon WHERE open_id = '${params.open_id}' AND use_type = ${params.use_type} AND status = ${params.status}`;
+  } else {
+    searchSQL = `SELECT * FROM coupon WHERE open_id = '${params.open_id}' AND status = ${params.status}`;
+  }
   connection.query(searchSQL, function(err, results) {
     errno.errno = 200;
     errno.message = '成功';
