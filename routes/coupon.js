@@ -20,11 +20,15 @@ var errno = {
 // 添加优惠券
 router.post('/add', function(req, res, next) {
     let params = req.body; // post
-    let addSQL = `INSERT INTO coupon (open_id, status, use_type, range_begin, range_end, rule, discount_type, discount_depth, acti_id, acti_desc, discount_desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    let addparam = [params.open_id, params.status, params.use_type, params.range_begin, params.range_end, params.rule, params.discount_type, params.discount_depth, params.acti_id || null, params.acti_desc || null, params.discount_desc || null];
-    console.log(params);
-    console.log(isArray(params.link_area))
-    connection.query(addSQL, addparam, function(err, results) {
+    let arr = [];
+    let addSQL = "INSERT INTO coupon (`open_id`, `status`, `use_type`, `range_begin`, `range_end`, `rule`, `discount_type`, `discount_depth`, `acti_id`, `acti_desc`, `discount_desc`) VALUES ?";
+    for (let i = 0, len = params.num; i < len; i++) {
+      
+      let addparam = [params.open_id, params.status, params.use_type, params.range_begin, params.range_end, params.rule, params.discount_type, params.discount_depth, params.acti_id || null, params.acti_desc || null, params.discount_desc || null];
+      arr.push(addparam);
+    }
+    console.log(arr);
+    connection.query(addSQL, [arr], function(err, results) {
       errno.errno = 200;
       errno.message = '成功';  
       if (err) {
@@ -32,7 +36,7 @@ router.post('/add', function(req, res, next) {
         errno.errno = 109;
         errno.message = '添加优惠券失败';
       }
-      res.send(errno);
+      res.send({errno, results});
     });
 });
 
@@ -58,8 +62,8 @@ router.get('/get', function(req, res, next) {
   });
 });
 
-// 删除优惠券
-router.delete('/delete', function(req, res, next) {
+// 商家删除优惠券
+router.delete('/shopper/delete', function(req, res, next) {
   let params = req.body;
   let delSQL = `DELETE FROM coupon WHERE acti_id = ${params.acti_id}`;
   connection.query(delSQL, function(err, results) {
@@ -68,27 +72,85 @@ router.delete('/delete', function(req, res, next) {
     if(err) {
       console.log('[UPDATE ERROR] - ', err.message);
       // 删除项目失败，返回errno: '102'
-      errno.errno = '110';
+      errno.errno = 110;
       errno.message = '删除优惠券失败';
     }
     res.send({errno, results});
   });
 });
 
-// 修改优惠券
-// router.post('/modify', function(req, res, next) {
-//   let params = req.body;
-//   let updateSQL = `UPDATE receive_address SET is_default = ?, open_id = ?, link_name = ?, link_phone = ?, link_area = ?, link_addr = ? WHERE receive_id = ?`;
-//   let updateParams = [params.is_default, params.open_id, params.link_name, params.link_phone, params.link_area, params.link_addr, params.receive_id];
-//   connection.query(updateSQL, updateParams, function(err, results) {
-//     if (err) {
-//       console.log('[UPDATE ERROR] - ', err.message);
-//       // 修改项目失败，返回errno: '103'
-//       errno.errno = '103';
-//       errno.message = '修改收货地址失败';
-//     }
-//     res.send({errno, results});
-//   });
-// });
+// 商家修改优惠券
+// 根据优惠id修改优惠券
+router.post('/shopper/modify', function(req, res, next) {
+  let params = req.body;
+  let updateSQL = `UPDATE coupon SET use_type = ?, status = ?, range_begin = ?, range_end = ?, rule = ?, discount_type = ?, discount_depth = ?, acti_desc = ?, discount_desc = ? WHERE acti_id = ?`;
+  let updateParams = [params.use_type, params.status, params.range_begin, params.range_end, params.rule, params.discount_type, params.discount_depth, params.acti_desc, params.discount_desc, params.acti_id];
+  connection.query(updateSQL, updateParams, function(err, results) {
+    errno.errno = 200;
+    errno.message = '成功';
+    if (err) {
+      console.log('[UPDATE ERROR] - ', err.message);
+      // 修改项目失败，返回errno: '103'
+      errno.errno = 111;
+      errno.message = '商家修改优惠券失败';
+    }
+    res.send({errno, results});
+  });
+});
+
+// 消费者领取优惠券
+// 修改open_id的*为用户名
+router.post('/consumer/receive', function(req, res, next) {
+  let params = req.body;
+  let updateSQL = `UPDATE coupon SET open_id = ? WHERE discount_id = ?`;
+  let updateParams = [params.open_id, params.discount_id];
+  connection.query(updateSQL, updateParams, function(err, results) {
+    errno.errno = 200;
+    errno.message = '成功';
+    if (err) {
+      console.log('[UPDATE ERROR] - ', err.message);
+      // 修改项目失败，返回errno: '103'
+      errno.errno = 111;
+      errno.message = '修改消费券的open_id失败';
+    }
+    res.send({errno, results});
+  });
+});
+
+// 修改优惠券状态
+router.post('/consumer/status', function(req, res, next) {
+  let params = req.body;
+  let updateSQL = `UPDATE coupon SET status = ? WHERE discount_id = ?`;
+  let updateParams = [params.status, params.discount_id];
+  connection.query(updateSQL, updateParams, function(err, results) {
+    errno.errno = 200;
+    errno.message = '成功';
+    if (err) {
+      console.log('[UPDATE ERROR] - ', err.message);
+      // 修改项目失败，返回errno: '103'
+      errno.errno = 112;
+      errno.message = '修改消费券状态失败';
+    }
+    res.send({errno, results});
+  });
+});
+
+// 商城展示优惠券
+router.get('/consumer/status', function(req, res, next) {
+  let params = URL.parse(req.url, true).query;
+  let searchSQL = `SELECT * FROM coupon WHERE open_id = '${params.open_id}' AND use_type = ${params.use_type} AND status = ${params.status} AND acti_id = ${params.status}`;
+  connection.query(updateSQL, function(err, results) {
+    errno.errno = 200;
+    errno.message = '成功';
+    if (err) {
+      console.log('[UPDATE ERROR] - ', err.message);
+      // 修改项目失败，返回errno: '103'
+      errno.errno = 113;
+      errno.message = '展示优惠券失败';
+    }
+    res.send({errno, results});
+  });
+});
+
 
 module.exports = router;
