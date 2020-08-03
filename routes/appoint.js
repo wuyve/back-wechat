@@ -2,8 +2,6 @@ var express = require('express');
 var router = express.Router();
 const URL = require('url');
 const mysql = require('mysql');
-const { isArray } = require('util');
-const { param } = require('./receiveAddr');
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -39,18 +37,32 @@ router.post('/add', function(req, res, next) {
 router.get('/get', function(req, res, next) {
   let params = URL.parse(req.url, true).query;
   console.log(params);
-  let searchSQL = `SELECT * FROM appoint WHERE open_id = '${params.open_id}' AND opera = '${params.opera}'`;
-  let searchParam = [params.open_id, params.opera];
-  connection.query(searchSQL, function(err, results) {
-    errno.errno = 200;
-    errno.message = '成功';
-    if (err) {
-      console.log('[SELECt ERROR] - ', err.message);
-      errno.errno = 105;
-      errno.message = '查询预约信息失败';
-    }
-    res.send({errno, results});
-  });
+  let searchSQL;
+  if (params.open_id) {
+    searchSQL = `SELECT * FROM appoint WHERE open_id = '${params.open_id}' AND opera = '${params.opera}'`;
+    connection.query(searchSQL, function(err, results) {
+      errno.errno = 200;
+      errno.message = '成功';
+      if (err) {
+        console.log('[SELECt ERROR] - ', err.message);
+        errno.errno = 1050;
+        errno.message = '用户查询预约信息失败';
+      }
+      res.send({errno, results});
+    });
+  } else {
+    searchSQL = `SELECT * FROM appoint WHERE opera = '${params.opera}'`;
+    connection.query(searchSQL, function(err, results) {
+      errno.errno = 200;
+      errno.message = '成功';
+      if (err) {
+        console.log('[SELECt ERROR] - ', err.message);
+        errno.errno = 1051;
+        errno.message = '商家查询预约信息失败';
+      }
+      res.send({errno, results});
+    });
+  }
 });
 
 // 修改预约信息

@@ -11,6 +11,7 @@ var usersRouter = require('./routes/users');
 var receive_address = require('./routes/receiveAddr');
 var appoint = require('./routes/appoint');
 var coupon = require('./routes/coupon.js');
+var my_enum = require('./routes/enum.js');
 
 var app = express();
 
@@ -31,6 +32,7 @@ app.use('/users', usersRouter);
 app.use('/receive/address', receive_address);
 app.use('/appoint', appoint);
 app.use('/coupon', coupon);
+app.use('/enum', my_enum);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
