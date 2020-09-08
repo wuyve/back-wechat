@@ -23,7 +23,7 @@ router.post('/add', function(req, res, next) {
     console.log(params);
     connection.query(addSQL, addparam, function(err, results) {
       errno.errno = 200;
-      errno.message = '成功';  
+      errno.message = '成功';
       if (err) {
         console.log('[INSERT ERROR] - ', err.message);
         errno.errno = 104;
